@@ -8,7 +8,14 @@ a {
 }
 
 h1 {
-	text-align: center;
+  text-align: center;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;
+  font-size: 50px;
+  font-weight: 100;
+}
+
+div#canvas {
+  text-align: center;
 }
 
 /* This sets the color for "TK" nodes to a light blue green. */
@@ -23,9 +30,9 @@ text {
 .node rect {
   stroke: #999;
   fill: #fff;
-  stroke-width: 1.5px;
+  stroke-width: 1px;
 }
-	.edgePath path {
-  stroke: #333;
-  stroke-width: 1.5px;
+  .edgePath path {
+  stroke: #999;
+  stroke-width: 1px;
 }
