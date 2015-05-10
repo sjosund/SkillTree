@@ -1,3 +1,34 @@
+function votePlusOne(resource_id){
+    $.post(
+        "/vote",
+        {'id': resource_id},
+        function (data) {}
+    )
+};
+
+function voteMinusOne(resource_id){
+    console.log("Voting - 1  id " + id);
+};
+
+function addTooltipContent(v) {
+    var content = "<h4>Resources</h4>" + v.resources.reduce(
+        function (prev_value, resource, i, a) {
+            return prev_value + "<a target='_blank' href=" + 
+                resource['url'].toString() + ">" + resource['name'] +
+                 "</a>   " + resource['score'] + 
+                 "<img src='/images/plus.png' id=votePlusOne> "+ // TODO jQuery!!!!
+                 "<img src='/images/minus.png' onclick='voteMinusOne()'> "+
+                 "<br>";
+        },
+        ""
+    )
+
+    $(".votePlusOne").click(function() {
+
+    })
+    return content;
+};
+
 function graph(nodes, edges) {
     var g = new dagreD3.graphlib.Graph()
       .setGraph({})
@@ -34,18 +65,24 @@ function graph(nodes, edges) {
     // Set up an SVG group so that we can translate the final graph.
     var svg = d3.select("svg"),
         svgGroup = svg.append("g");
-
+    $(".edgePath").css({"stroke-width": '5px'});
     // Run the renderer. This is what draws the final graph.
     render(d3.select("svg g"), g);
 
     svgGroup.selectAll("g.node")
         .each(function(v) {
+
             $(this).qtip({
                 content: "<h4>Resources</h4>" + g.node(v).resources.reduce(
                     function (prev_value, resource, i, a) {
-                        return prev_value + "<a target='_blank' href=" + resource['link'].toString() + ">" + resource['name'] + "</a> " + resource['score'] + " <br>";
+                        return prev_value + "<a target='_blank' href=" + 
+                            resource['url'].toString() + ">" + resource['name'] +
+                             "</a>   " + resource['score'] + 
+                             "  <img class=voteButton src='/images/plus.png' height='13px' width='13px' onclick='votePlusOne(\"" + g.node(v)._id + "\",\"" + resource['_id'] + "\")'> "+ // TODO jQuery!!!!
+                             "  <img class=voteButton src='/images/minus.png' height='13px' width='13px' onclick='voteMinusOne(\"" + resource['_id'] + "\"))'> "+
+                             "<br>";
                     },
-                    ""
+                   ""
                 ),
                 show: 'click',
                 hide: 'unfocus',  
@@ -54,9 +91,12 @@ function graph(nodes, edges) {
                     adjust: {
                         mouse: false
                     }
-                } 
+                },
+                style: 'qtip-light'
             });
+            $
         });
+
 
     // Center the graph
     var xCenterOffset = (svg.attr("width") - g.graph().width) / 2;

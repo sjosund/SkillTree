@@ -2,6 +2,7 @@
 
 
     <head>
+        <link rel="shortcut icon" href="/images/tree.jpg">
         <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
         <link href="/stylesheets/add_forms.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="stylesheets/jquery.qtip.min.css">
@@ -29,15 +30,16 @@
         var nodes = [];
         {{#nodes}}
             nodes.push({
-                'id':'{{id}}',
-                'label':'{{label}}',
-                'class':'{{class}}',
+                'id':'{{_id}}',
+                'label':'{{name}}',
+                'class':'{{subject}}',
                 'resources': [
                     {{#resources}}
                     {
-                        "link": "{{link}}",
+                        "url": "{{url}}",                        
+                        "name": "{{name}}",
                         "score": "{{score}}",
-                        "name": "{{name}}"
+                        "_id": "{{_id}}"
                     },
                     {{/resources}}
                 ]
@@ -48,15 +50,17 @@
 
         {{#edges}}
             edges.push({
-                'from':'{{from}}',
-                'to':'{{to}}'
+                'from':'{{from_node}}',
+                'to':'{{to_node}}'
             });
         {{/edges}}
         graph(nodes, edges);
     </script>
-    <div class="add_forms" id="add_node_form">
-    </div>
-    <div class="add_forms" id="add_edge_form">
-    </div>
-    <div class="add_forms" id="add_resource_form">
+    <div id="forms">
+        <div class="add_forms" id="add_node_form">
+        </div>
+        <div class="add_forms" id="add_edge_form">
+        </div>
+        <div class="add_forms" id="add_resource_form">
+        </div>
     </div>

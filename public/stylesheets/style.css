@@ -32,7 +32,13 @@ text {
   fill: #fff;
   stroke-width: 1px;
 }
-  .edgePath path {
+
+.edgePath path {
   stroke: #999;
   stroke-width: 1px;
+}
+
+#voteButton {
+  height: 13px;
+  width: 13px;
 }

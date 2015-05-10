@@ -59,7 +59,7 @@ $(document).ready(function() {
             $("<input/>", {
                 type: 'text',
                 id: 'vname',
-                name: 'link',
+                name: 'url',
                 placeholder: 'Link'
             }),
             $("<input/>", {
@@ -73,18 +73,25 @@ $(document).ready(function() {
                 type: 'submit',
                 id: 'submit',
                 value: 'Add resource to node'
+            }),
+            $("<input/>", {
+                type: 'hidden',
+                id: 'vname',
+                name: 'subject',
+                value: 'programming'
             })
         )
     )
-
-    $("form").submit(function (e) {
-        //e.preventDefault();
-        var $this = $(this);
-        $.post(
-            $this.attr("action"),
-            $this.serialize(),
-            function (data) {},
-            "json"
-        );
-    });
 });
+
+    // $("form").submit(function (e) {
+    //     e.preventDefault();
+    //     var $this = $(this);
+    //     $.post(
+    //         $this.attr("action"),
+    //         $this.serialize(),
+    //         function (data) {},
+    //         "json"
+    //     );
+    // });
+//)};
