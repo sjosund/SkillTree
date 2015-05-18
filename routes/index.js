@@ -10,134 +10,114 @@ router.get('/users/:id', function(req, res) {
 })
 
 router.get('/', function(req, res) {
+    res.render('index', {title: 'Skill Tree'});
+});
+
+router.get('/graph', function(req, res) {
+
     var db = req.db;
-    var nodes = db.model('nodes');
-    var subject = req.query['subject'];
-
-    nodes.find(
-        {subject: subject},
-        function (err, nodes_)
-    {
-        var edges = db.model('edges');
-        ids = [];
-        for (var i = nodes_.length - 1; i >= 0; i--) {
-            ids.push(nodes_[i]['_id']);
-
-            for (var r = 0; r < nodes_[i]['resources'].length; r++) {
-
-                var score = 0;
-                for (var v = 0; v < nodes_[i]['resources'][r]['votes'].length; v++) {
-
-                    score += nodes_[i]['resources'][r]['votes'][v]['value'];
-                    console.log('Score : ' + score);
-                }
-
-                nodes_[i]['resources'][r].score = score;
-                console.log("Resource: " + nodes_[i]['resources'][r]['score']);
-            }
-        };
-        edges.find({from_node: {$in : ids}}, function(err, edges_) {
-            res.render(
-                'index',
-                {
-                    nodes : nodes_,
-                    edges : edges_,
-                    title : 'Skill Tree',
-                }
-            )
-        })
-    })
+    //db.traverse().from('nodes').all().then(function (res) {
+    //    console.log(res);
+    //});
+    db.select().from('nodes').all().then(function (nodes) {
+        db.select().from('edges').all().then(function (edges) {
+            res.json({nodes: nodes, edges: edges})
+        });
+    });
 });
 
 
 router.post('/nodes', function (req, res) {
     var db = req.db;
-    var nodes = db.model('nodes');
-    var users = db.model('users');
+    var name = req.body['name'];
+    console.log("NAME: " + name);
+    db.select().from('nodes')
+        .where({'name': name})
+        .all()
+        .then(function (nodes) {
+            console.log(nodes);
+            if (nodes.length == 0) {
+                db.class.get('nodes').then(function (nodes_) {
+                    nodes_.create({name: name}).then(
+                        function (res) {
+                            console.log(res);
+                        }
+                    )
+                });
+            }
+        })
 
-
-    users.findOne({name: 'sjosund'}, function (err, user) {
-        var node = new nodes({
-            name: req.body['node_name'],
-            subject: 'programming',//req.body['subject'],
-            created_by: user._id,
-            resources: []
-        });
-        node.save();
-
-    });
     res.redirect(req.header('Referer'));
+
 });
 
-router.post('/resources', function (req, res) {
+router.get('/resources', function (req, res) {
     var db = req.db;
-    var nodes = db.model('nodes');
-    var users = db.model('users');
-
-    console.log("Finding : " + req.body['node_name']);
-    nodes.findOne(
-
-        {name: req.body['node_name']},
-        function (err, node) {
-            
-            users.findOne({name: 'sjosund'}, function (err, user) {
-
-                nodes.update(
-                    {_id: node._id},
-                    {$push: {
-                        resources: {
-                            url: req.body['url'],
-                            votes: [
-                                {
-                                    value: 1,
-                                    created_by: user._id
-                                }
-                            ],
-                            name: req.body['name']
-                        },
-                    }},
-                    function (err) {
-                        res.end();
-                    }
-                );
-            });
+    db.query(
+        'select expand(in("resource_to")) from ' + req.query.id, // TODO fix this damn it.
+        {
+            //params: {
+            //    idd: req.query.id
+            //}
         }
-    )
-    res.redirect(req.header('Referer'));
+    ).then(function (resources){
+            res.json(resources);
+        });
+    //var nodes = db.model('nodes');
+    //var users = db.model('users');
+    //
+    //console.log("Finding : " + req.body['node_name']);
+    //nodes.findOne(
+    //
+    //    {name: req.body['node_name']},
+    //    function (err, node) {
+    //
+    //        users.findOne({name: 'sjosund'}, function (err, user) {
+    //
+    //            nodes.update(
+    //                {_id: node._id},
+    //                {$push: {
+    //                    resources: {
+    //                        url: req.body['url'],
+    //                        votes: [
+    //                            {
+    //                                value: 1,
+    //                                created_by: user._id
+    //                            }
+    //                        ],
+    //                        name: req.body['name']
+    //                    },
+    //                }},
+    //                function (err) {
+    //                    res.end();
+    //                }
+    //            );
+    //        });
+    //    }
+    //)
+    //res.redirect(req.header('Referer'));
 })
 
 router.post('/edges', function (req, res) {
     var db = req.db;
-    var nodes = db.model('nodes');
+    console.log(req.body)
+    // TODO fix unique edges
+    db.select().from('nodes').where({name: req.body['from_node_name']}).one().then(
+        function (from_node) {
+            db.select().from('nodes').where({name: req.body['to_node_name']}).one().then(
+                function (to_node) {
+                    db.create('edge', 'edges')
+                        .from(from_node['@rid'])
+                        .to(to_node['@rid'])
+                        .one()
+                        .then(function (e) {
+                            console.log("created edge " + e);
+                        });
+                });
+        });
 
-    nodes.find(
-        {name: req.body['from_node_name']},
-        function (err, from_node) {
-            
-            var from_id = from_node[0]['_id'];
-            nodes.find(
-                {name: req.body['to_node_name']},
-                function (err, to_node) {           
+    res.redirect(req.header('Referer'));
 
-                    var users = db.model('users');
-                    users.find({name: 'sjosund'}, function (err, user) {
-                        var to_id = to_node[0]['_id'];
-                        var edges = db.model('edges');
-                        edge = new edges(
-                            {
-                                from_node: from_id,
-                                to_node: to_id,
-                                created_by: user._id,
-                                votes: []
-                            }
-                        )
-                        edge.save();
-                        res.redirect(req.header('Referer'));
-                    });
-                }
-            )
-        }
-    )
 });
 
 router.post('/vote', function (req, res) {

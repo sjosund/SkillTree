@@ -7,7 +7,7 @@ $(document).ready(function() {
             $("<input/>", {
                 type: 'text',
                 id: 'vname',
-                name: 'node_name',
+                name: 'name',
                 placeholder: 'Node name'
             }),
             $("<br/>"),
@@ -84,6 +84,9 @@ $(document).ready(function() {
     )
 });
 
+$("#add_edge_form").submit(function (e) {
+
+});
     // $("form").submit(function (e) {
     //     e.preventDefault();
     //     var $this = $(this);

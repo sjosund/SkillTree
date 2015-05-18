@@ -1,50 +1,22 @@
-function votePlusOne(resource_id){
-    $.post(
-        "/vote",
-        {'id': resource_id},
-        function (data) {}
-    )
-};
+function graph(data) {
+    var raw_nodes = data.responseJSON['nodes'];
+    var edges = data.responseJSON['edges'];
 
-function voteMinusOne(resource_id){
-    console.log("Voting - 1  id " + id);
-};
-
-function addTooltipContent(v) {
-    var content = "<h4>Resources</h4>" + v.resources.reduce(
-        function (prev_value, resource, i, a) {
-            return prev_value + "<a target='_blank' href=" + 
-                resource['url'].toString() + ">" + resource['name'] +
-                 "</a>   " + resource['score'] + 
-                 "<img src='/images/plus.png' id=votePlusOne> "+ // TODO jQuery!!!!
-                 "<img src='/images/minus.png' onclick='voteMinusOne()'> "+
-                 "<br>";
-        },
-        ""
-    )
-
-    $(".votePlusOne").click(function() {
-
-    })
-    return content;
-};
-
-function graph(nodes, edges) {
     var g = new dagreD3.graphlib.Graph()
       .setGraph({})
       .setDefaultEdgeLabel(function() { return {}; });
     // Here we"re setting nodeclass, which is used by our custom drawNodes function
     // below.
 
-    for (i = 0; i < nodes.length; i++) {
+    nodes = {};
+    for (var i = 0; i < raw_nodes.length; i++) {
+        node = new Node(raw_nodes[i]);
+        nodes[raw_nodes[i]['@rid']] = node;
         g.setNode(
-            nodes[i]['id'],
+            node.id,
             {
-                label: nodes[i]['label'],
-                class: nodes[i]['class'],
-                resources: nodes[i]['resources'].sort(
-                    function(a, b){return b['score'] - a['score'];}
-                )
+                label: node.name,
+                class: "programming"
             }
         );
     }
@@ -53,10 +25,10 @@ function graph(nodes, edges) {
       // Round the corners of the nodes
       node.rx = node.ry = 10;
     });
-    for (i = 0; i < edges.length; i++) {
+    for (var i = 0; i < edges.length; i++) {
         g.setEdge(
-            edges[i]['from'],
-            edges[i]['to']
+            edges[i]['out'],
+            edges[i]['in']
         );
     }
 
@@ -71,35 +43,77 @@ function graph(nodes, edges) {
 
     svgGroup.selectAll("g.node")
         .each(function(v) {
-
-            $(this).qtip({
-                content: "<h4>Resources</h4>" + g.node(v).resources.reduce(
-                    function (prev_value, resource, i, a) {
-                        return prev_value + "<a target='_blank' href=" + 
-                            resource['url'].toString() + ">" + resource['name'] +
-                             "</a>   " + resource['score'] + 
-                             "  <img class=voteButton src='/images/plus.png' height='13px' width='13px' onclick='votePlusOne(\"" + g.node(v)._id + "\",\"" + resource['_id'] + "\")'> "+ // TODO jQuery!!!!
-                             "  <img class=voteButton src='/images/minus.png' height='13px' width='13px' onclick='voteMinusOne(\"" + resource['_id'] + "\"))'> "+
-                             "<br>";
-                    },
-                   ""
-                ),
-                show: 'click',
-                hide: 'unfocus',  
-                position: {
-                    target: 'mouse',
-                    adjust: {
-                        mouse: false
-                    }
-                },
-                style: 'qtip-light'
-            });
-            $
-        });
-
+            nodes[v].qtip($(this));
+        })
 
     // Center the graph
     var xCenterOffset = (svg.attr("width") - g.graph().width) / 2;
     svgGroup.attr("transform", "translate(" + xCenterOffset + ", 20)");
     svg.attr("height", g.graph().height + 40);
+};
+
+
+var Node = function (node) {
+    this.name = node.name;
+    this.id = node['@rid'];
+    this.resources = [];
+};
+Node.prototype.qtip = function (graph_node) {
+    var _this = this;
+    $.ajax({
+        datatype: 'json',
+        url: '/resources',
+        data: {id: _this.id},
+        complete: function (resources) {
+            _this.resources = _this.parse_resources(resources);
+            graph_node.qtip({
+                content: _this.resources_view(),
+                show: 'click',
+                hide: 'unfocus',
+                position: {
+                    mouse: false
+                },
+                style: 'qtip-light'
+            });
+            console.log(_this);
+        }
+    });
+};
+Node.prototype.parse_resources = function (resources) {
+    res = resources.responseJSON.map(function (resource) {
+        return new Resource(resource);
+    });
+    return res;
+};
+Node.prototype.resources_view = function() {
+    content = "<h4>Resources</h4>" + this.resources.reduce(
+        function (prev_value, resource, i, a) {
+            return resource.display();
+        },
+        ""
+    );
+    return content;
+};
+
+var Resource = function(resource) {
+    this.id = resource['@rid'];
+    this.url = resource['link'];
+    this.name = resource['name'];
+};
+Resource.prototype.display = function () {
+    console.log(this.id);
+    console.log(typeof(this.id));
+    var s_ = this.id.substring(1);
+    var s__ = s_.split(':');
+    return "<a target='_blank' href=" + this.url + ">" + this.name + "</a> " +
+        "<img src='/images/plus.png' class=voteButton onclick='vote(1, " + s__[0] + "," + s__[1] + ")'>" +
+        "<img src='/images/minus.png' class=voteButton onclick='vote(-1, " + s__[0] + "," + s__[1] + ")'> <br>";
+};
+var vote = function(score, type_id, id) {
+    $.ajax({
+        type: "POST",
+        url: '/vote',
+        data: {id: '#' + type_id + ":" + id},
+        success: function(){console.log('Voted');}
+    });
 };

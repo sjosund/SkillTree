@@ -38,7 +38,7 @@ text {
   stroke-width: 1px;
 }
 
-#voteButton {
+.voteButton {
   height: 13px;
   width: 13px;
 }

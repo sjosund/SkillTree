@@ -26,35 +26,12 @@
         <svg id="svg-canvas" width=960 height=600></svg>
     </div>
 
-    <script id="js">
-        var nodes = [];
-        {{#nodes}}
-            nodes.push({
-                'id':'{{_id}}',
-                'label':'{{name}}',
-                'class':'{{subject}}',
-                'resources': [
-                    {{#resources}}
-                    {
-                        "url": "{{url}}",                        
-                        "name": "{{name}}",
-                        "score": "{{score}}",
-                        "_id": "{{_id}}"
-                    },
-                    {{/resources}}
-                ]
-            });
-        {{/nodes}}
-
-        var edges = [];
-
-        {{#edges}}
-            edges.push({
-                'from':'{{from_node}}',
-                'to':'{{to_node}}'
-            });
-        {{/edges}}
-        graph(nodes, edges);
+    <script type="text/javascript" id="js">
+        $.ajax({
+            dataType: "json",
+            url:'/graph?subject=programming',
+            complete: function (res) {graph(res)}
+        });
     </script>
     <div id="forms">
         <div class="add_forms" id="add_node_form">

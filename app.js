@@ -12,6 +12,19 @@ var mongo = require("mongodb");
 var mongoose = require('mongoose');
 mongoose.connect('localhost:27017/SkillTree');
 
+var Oriento = require('oriento');
+var orientdb_server = Oriento({
+    host: 'localhost',
+    port: 2424,
+    username: 'root',
+    password: 'larslars'
+});
+orientdb_server.list()
+    .then(function (dbs) {
+        console.log('There are ' + dbs.length + ' databases on the server.');
+    });
+var orient_db = orientdb_server.use('skilltree');
+
 var routes = require('./routes/index');
 //var users = require('./routes/users');
 
@@ -34,7 +47,8 @@ fs.readdirSync(__dirname + '/models').forEach(function (filename) {
 });
 
 app.use(function(req, res, next){
-    req.db = mongoose;
+    //req.db = mongoose;
+    req.db = orient_db;
     next();
 });
 
