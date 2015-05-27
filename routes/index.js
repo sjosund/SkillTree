@@ -61,8 +61,8 @@ router.get('/resources', function (req, res) {
             //}
         }
     ).then(function (resources){
-            res.json(resources);
-        });
+        res.json(resources);
+    });
     //var nodes = db.model('nodes');
     //var users = db.model('users');
     //
@@ -96,7 +96,17 @@ router.get('/resources', function (req, res) {
     //    }
     //)
     //res.redirect(req.header('Referer'));
-})
+});
+
+router.get('/votes', function(req, res) {
+    var db = req.db;
+    db.query(
+        'select expand(in("voted_on")) from' + req.query.id, {}
+    ).then(function (votes) {
+        console.log(votes);
+        res.json(votes);
+    });
+});
 
 router.post('/edges', function (req, res) {
     var db = req.db;
@@ -121,7 +131,27 @@ router.post('/edges', function (req, res) {
 });
 
 router.post('/vote', function (req, res) {
-    console.log(req.body);
+    var db = req.db;
+    //db.class.get('vote').then(
+    //    function (vote) {
+    //        vote.create({})
+    console.log("score" + req.body.score);
+    db.create('VERTEX', 'vote')
+        .set({
+            score: req.body.score
+        })
+        .one()
+        .then(
+        function (res) {
+            console.log("in inner vote" + res);
+            db.create('edge', 'voted_on')
+                .from(res['@rid'])
+                .to(req.body['id'])
+                .one()
+                .then(function (e) {
+                    console.log('created vote ' + e);
+                });
+        });
 });
 
 module.exports = router;

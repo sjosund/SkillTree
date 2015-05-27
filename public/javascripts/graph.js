@@ -75,7 +75,6 @@ Node.prototype.qtip = function (graph_node) {
                 },
                 style: 'qtip-light'
             });
-            console.log(_this);
         }
     });
 };
@@ -99,21 +98,36 @@ var Resource = function(resource) {
     this.id = resource['@rid'];
     this.url = resource['link'];
     this.name = resource['name'];
+    var _this = this;
+    $.ajax({
+        datatype: 'json',
+        url: '/votes',
+        data: {id: _this.id},
+        complete: function (votes) {
+            _this.score = _this.parse_votes(votes);
+        }
+    })
+};
+Resource.prototype.parse_votes = function (votes) {
+    var score = votes.responseJSON.reduce(function (pv, cv) {return pv + cv['score']}, 0);
+    console.log("score : " + score);
+    return score;
 };
 Resource.prototype.display = function () {
-    console.log(this.id);
-    console.log(typeof(this.id));
     var s_ = this.id.substring(1);
     var s__ = s_.split(':');
     return "<a target='_blank' href=" + this.url + ">" + this.name + "</a> " +
         "<img src='/images/plus.png' class=voteButton onclick='vote(1, " + s__[0] + "," + s__[1] + ")'>" +
-        "<img src='/images/minus.png' class=voteButton onclick='vote(-1, " + s__[0] + "," + s__[1] + ")'> <br>";
+        "<img src='/images/minus.png' class=voteButton onclick='vote(-1, " + s__[0] + "," + s__[1] + ")'>" + this.score;
 };
 var vote = function(score, type_id, id) {
     $.ajax({
         type: "POST",
         url: '/vote',
-        data: {id: '#' + type_id + ":" + id},
+        data: {
+            id: '#' + type_id + ":" + id,
+            score: score
+        },
         success: function(){console.log('Voted');}
     });
 };
