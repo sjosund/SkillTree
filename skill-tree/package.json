@@ -13,6 +13,7 @@
     "react-dom": "^16.12.0",
     "react-scripts": "3.3.0",
     "react-sigma": "^1.2.31",
+    "reactstrap": "^8.2.0",
     "sigma": "^2.0.0-alpha22"
   },
   "scripts": {
