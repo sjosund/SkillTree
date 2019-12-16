@@ -7,33 +7,19 @@ class NodeForm extends Component {
         this.state = {
             name: ''
         };
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleChange(event) {
-        console.log(this.state);
-        const value = event.target.value;
-
-        this.setState({name: value});
-    }
-
-    handleSubmit(event) {
-        console.log(this.state);
-        alert(this.state.name);
     }
 
     render() {
         return (
             <div>
                 <h4>Create new node</h4>
-                <Form onSubmit={this.handleSubmit}>
+                <Form onSubmit={this.props.onSubmit}>
                     <FormGroup row>
                         <Col md={8}>
                             <Input type='text' id='name'
                                    placeholder='Node name'
-                                   value={this.state.name}
-                                   onChange={this.handleChange}>
+                                   value={this.props.value}
+                                   onChange={this.props.onChange}>
                             </Input>
                         </Col>
                         <Col>

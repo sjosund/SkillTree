@@ -1,13 +1,25 @@
 import React from 'react';
-import { Navbar } from 'react-bootstrap';
+import { Navbar, Container, Nav, NavItem } from 'react-bootstrap';
+import '../App.css';
 
 const HeaderComponent = () => {
     return (
-        <>
-            <Navbar>
-                Skill Tree
+        <Container>
+            <Navbar className="navbar-dark full-width">
+                <Navbar.Brand href="#">Skill Tree</Navbar.Brand>
+                <Nav>
+                    <NavItem>
+                        <Nav.Link href="#" active>Home</Nav.Link>
+                    </NavItem>
+                    <NavItem>
+                        <Nav.Link href="#">About</Nav.Link>
+                    </NavItem>
+                    <NavItem>
+                        <Nav.Link href="#">Settings</Nav.Link>
+                    </NavItem>
+                </Nav>
             </Navbar>
-        </>
+        </Container>
     )
 };
 

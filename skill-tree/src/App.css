@@ -1,3 +1,18 @@
 .full-width {
     max-width: 100%;
 }
+
+.navbar-dark {
+    color: #b8c1ec;
+    background-color: #232946;
+    margin-bottom: 40px;
+}
+
+.node-container {
+    border-radius: 15px;
+    margin-right: 30px;
+}
+
+h4 {
+    margin-top: 40px;
+}
