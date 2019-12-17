@@ -82,14 +82,14 @@ class MainComponent extends Component {
 
         const graph2 = {
             nodes: [
-                { id: "n0", label: "Counting", x: 0, y: 0, size: 3, color: '#008cc2' },
-                { id: "n1", label: "Addition", x: 3, y: 1, size: 3, color: '#008cc2' },
-                { id: "n2", label: "Multiplication", x: 1, y: 3, size: 3, color: '#E57821' },
-                { id: "n3", label: "Subtraction", x: 1, y: 3, size: 3, color: '#E57821' },
-                { id: "n4", label: "Division", x: 1, y: 3, size: 3, color: '#E57821' },
-                { id: "n5", label: "Length", x: 1, y: 3, size: 3, color: '#E57821' },
-                { id: "n6", label: "Area", x: 1, y: 3, size: 3, color: '#E57821' },
-                { id: "n7", label: "Volume", x: 1, y: 3, size: 3, color: '#E57821' }
+                { id: "n0", label: "Counting", x: 0, y: 0, size: 100, color: '#008cc2' },
+                { id: "n1", label: "Addition", x: 3, y: 1, size: 100, color: '#008cc2' },
+                { id: "n2", label: "Multiplication", x: 1, y: 3, size: 100, color: '#E57821' },
+                { id: "n3", label: "Subtraction", x: 1, y: 3, size: 100, color: '#E57821' },
+                { id: "n4", label: "Division", x: 1, y: 3, size: 100, color: '#E57821' },
+                { id: "n5", label: "Length", x: 1, y: 3, size: 100, color: '#E57821' },
+                { id: "n6", label: "Area", x: 1, y: 3, size: 100, color: '#E57821' },
+                { id: "n7", label: "Volume", x: 1, y: 3, size: 100, color: '#E57821' }
             ],
             edges: [
                 { id: "e0", source: "n0", target: "n1", color: '#282c34', type:'arrow', count:1, size:2 },
@@ -104,7 +104,7 @@ class MainComponent extends Component {
             ]
         };
         this.setState({
-            graph: graph
+            graph: graph2
         });
     }
 

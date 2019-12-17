@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Row, Button } from 'reactstrap';
-import getResources from '../db/resourceDb'
+// import getResources from '../db/resourceDb'
 
 class NodeComponent extends Component {
     constructor(props) {
@@ -20,7 +20,7 @@ class NodeComponent extends Component {
             )
         }
 
-        const resources = getResources(this.props.node.id); // todo only get these once for a given node
+        // const resources = getResources(this.props.node.id); // todo only get these once for a given node
 
 
         const targets = Object.values(this.props.targets).map(target => {
