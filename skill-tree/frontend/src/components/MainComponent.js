@@ -4,7 +4,6 @@ import { Row, Col, Container } from 'reactstrap';
 import GraphComponent from './GraphComponent';
 import HeaderComponent from './HeaderComponent';
 import NodeForm from "./FormComponent";
-import {addEdge, addEdges, addNode, fullGraph} from '../db/graphDb';
 import NodeComponent from "./NodeComponent";
 
 
@@ -16,7 +15,8 @@ class MainComponent extends Component {
             formName: '',
             activeNode: null,
             activeSource: null,
-            targets: {}
+            targets: {},
+            resources: null
         };
 
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
@@ -29,7 +29,15 @@ class MainComponent extends Component {
 
     async handleFormSubmit(event) {
         event.preventDefault();
-        const newNode = await addNode(this.state.formName);
+        const ret = await fetch('/nodes', {
+            method: 'POST',
+            body: JSON.stringify({name: this.state.formName}),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }); //addNode(this.state.formName);
+        const newNode = await ret.json();
+        console.log(newNode);
         let graph = this.state.graph;
         graph.nodes[newNode.source] = newNode;
         console.log(graph);
@@ -50,15 +58,24 @@ class MainComponent extends Component {
         }
     }
 
-    markActive(event) {
+    async markActive(event) {
         let node = event.data.node;
         if (this.state.activeSource !== null) {
             let targets = this.state.targets;
             targets[node.id] = node;
             this.setState({targets: targets});
         } else {
+            const resp = await fetch(`/resources/test`, { headers : {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }); //${this.props.node.id}`); // todo only get these once for a given node
+            // const resources = await resp.json();
+            // console.log(resources);
+
             this.setState({
-                activeNode: node
+                activeNode: node,
+                resources: null//resources
             });
         }
     }
@@ -71,14 +88,27 @@ class MainComponent extends Component {
     }
 
     async submitEdges(event) {
-        const newEdges = await addEdges(this.state.activeSource, Object.values(this.state.targets));
+        const body = JSON.stringify({
+            source: this.state.activeSource,
+            targets: Object.values(this.state.targets)});
+        console.log(body);
+        const ret = await fetch('/edges', {
+            method: 'POST',
+            body: body,
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+        const newEdges = await ret.json();
         let graph = this.state.graph;
         graph.edges = graph.edges.concat(newEdges);
         this.setState({graph: graph, targets: {}, activeSource: null});
     }
 
     async loadGraph() {
-        const graph = await fullGraph();
+        const ret = await fetch('/graph');//await fullGraph();
+        const graph = await ret.json();
 
         const graph2 = {
             nodes: [
@@ -104,7 +134,7 @@ class MainComponent extends Component {
             ]
         };
         this.setState({
-            graph: graph2
+            graph: graph
         });
     }
 
@@ -127,7 +157,8 @@ class MainComponent extends Component {
                         <NodeComponent node={this.state.activeNode}
                                        onMarkSource={this.markSource}
                                        targets={this.state.targets}
-                                       submitEdges={this.submitEdges}/>
+                                       submitEdges={this.submitEdges}
+                                       resources={this.resources}/>
                     </Col>
                 </Row>
             </Container>

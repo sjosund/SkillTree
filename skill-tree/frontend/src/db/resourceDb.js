@@ -25,7 +25,7 @@ const resourceSchema = new Schema({
 const Resources = mongoose.model('Resource', resourceSchema);
 
 const url = 'mongodb://127.0.0.1:27017/skill-tree';
-const connect = mongoose.connect(url);
+// const connect = mongoose.connect(url);
 
 function addResource(nodeId, text, url, userId) {
     connect.then()

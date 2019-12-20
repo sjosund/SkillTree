@@ -20,9 +20,6 @@ class NodeComponent extends Component {
             )
         }
 
-        // const resources = getResources(this.props.node.id); // todo only get these once for a given node
-
-
         const targets = Object.values(this.props.targets).map(target => {
             return (
                 <li key={target.id}>{target.label}</li>
@@ -46,6 +43,11 @@ class NodeComponent extends Component {
                 <h4>Resources</h4>
                 <Row>
                     <h5>{this.props.node.label}</h5>
+                </Row>
+                <Row>
+                    <ul>
+                        {this.props.resources}
+                    </ul>
                 </Row>
                 <Row>
                     Add new resource
