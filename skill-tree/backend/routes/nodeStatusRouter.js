@@ -1,16 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const nodeStatus = require('../models/nodeStatus');
 
-const Resources = require('../models/resources');
-
-
-const resourceRouter = express.Router();
-resourceRouter.use(bodyParser.json());
+const nodeStatusRouter = express.Router();
+nodeStatusRouter.use(bodyParser.json());
 
 
-resourceRouter.route('/:nodeId')
+nodeStatusRouter.route('/:userId')
     .get((req, res, next) => {
-        Resources.find({ nodeId: req.params.nodeId })
+        nodeStatus.find({ userId: req.params.userId })
             .then(resources => {
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
@@ -19,16 +17,17 @@ resourceRouter.route('/:nodeId')
             }, (err) => next(err));
     });
 
-resourceRouter.route('/')
+nodeStatusRouter.route('/')
     .post((req, res, next) => {
         // TODO validate input
-        console.log(req.body);
-        Resources.create(req.body)
+        // TODO Don't allow duplicates?
+        const userId = 'tmp';
+        const doc = {nodeId: req.body.nodeId, userId: userId, status: req.body.status};
+        nodeStatus.updateOne({nodeId: req.body.nodeId, userId: userId}, doc, {upsert: true})
             .then(resp => {
-                console.log('Inserted into DB');
                 res.json(resp._doc);
             }, err => { next(err); });
     });
 
 
-module.exports = resourceRouter;
+module.exports = nodeStatusRouter;

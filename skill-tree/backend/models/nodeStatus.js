@@ -1,27 +1,24 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const resourceSchema = new Schema({
+const nodeStatusSchema = new Schema({
     nodeId: {
         type: String,
         required: true
     },
-    text: {
-        type: String,
-        default: ''
-    },
-    url: {
-        type: String,
-        required: true
-    },
-    createdBy: {
+    userId: {
         type: String,
         default: 'tmp'
+    },
+    status: {
+        type: String,
+        enum: ['goal', 'known', 'unknown'],
+        required: true
     }
 }, {
     timestamps: true
 });
 
-const Resources = mongoose.model('Resource', resourceSchema);
+const NodeStatus = mongoose.model('NodeStatus', nodeStatusSchema);
 
-module.exports = Resources;
+module.exports = NodeStatus;

@@ -5,12 +5,13 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require('mongoose');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
 const graphRouter = require('./routes/graphRouter');
 const nodeRouter = require('./routes/nodeRouter');
 const edgeRouter = require('./routes/edgeRouter');
 const resourceRouter = require('./routes/resourceRouter');
+const nodeStatusRouter = require('./routes/nodeStatusRouter');
 
 var app = express();
 
@@ -36,7 +37,7 @@ app.use('/graph', graphRouter);
 app.use('/nodes', nodeRouter);
 app.use('/edges', edgeRouter);
 app.use('/resources', resourceRouter);
-
+app.use('/nodeStatus', nodeStatusRouter);
 
 
 // catch 404 and forward to error handler
