@@ -13,7 +13,7 @@ const GraphComponent = (props) => {
     return (
         <Sigma renderer="canvas"
                graph={props.graph}
-               settings={{drawEdges: true, clone: true, minArrowSize: 10, labelThreshold:0}}
+               settings={{drawEdges: true, clone: true, minArrowSize: 10, labelThreshold:0, maxNodeSize: 13}}
                style={{height: "100vh", overflow: "auto"}}
                onClickNode={props.onClick}>
             <RandomizeNodePositions/>

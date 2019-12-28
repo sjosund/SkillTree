@@ -46,6 +46,7 @@ class NodeComponent extends Component {
     empty() {
         return (
             <div>
+                <Row className="node-label"></Row>
                 <h4>Resources</h4>
                 <Row>
                     <h5></h5>
@@ -87,10 +88,10 @@ class NodeComponent extends Component {
 
         return (
             <div>
-                <h4>Resources</h4>
-                <Row>
-                    <h5>{this.props.node.label}</h5>
+                <Row className="justify-content-center align-content-center node-label">
+                    <h4>{this.props.node.label}</h4>
                 </Row>
+                <h4>Resources</h4>
                 <Row>
                     <ul>
                         {resources}

@@ -181,18 +181,15 @@ class MainComponent extends Component {
     render() {
         const graph = (this.state.graph === null) ? null : this.state.graph.toSigma();
         return (
-            <Container className="full-width">
+            <Container fluid>
                 <Row>
                     <HeaderComponent/>
                 </Row>
                 <Row>
-                    <Col md={9}>
+                    <Col className="graph-container" sm={9}>
                         <GraphComponent graph={graph} onClick={this.markActive}/>
                     </Col>
-                    <Col className="navbar-dark node-container" >
-                        <NodeForm onChange={this.handleNewNodeChange}
-                                  onSubmit={this.handleNewNodeSubmit}
-                                  value={this.state.newNodeName}/>
+                    <Col>
                         <NodeComponent node={this.state.activeNode}
                                        onMarkSource={this.markSource}
                                        targets={this.state.targets}
@@ -205,6 +202,10 @@ class MainComponent extends Component {
                                        setGoal={this.handleSetStatus('goal')}
                                        setKnown={this.handleSetStatus('known')}
                                        setUnknown={this.handleSetStatus('unknown')}/>
+                        <NodeForm className="new-node"
+                                  onChange={this.handleNewNodeChange}
+                                  onSubmit={this.handleNewNodeSubmit}
+                                  value={this.state.newNodeName}/>
                     </Col>
                 </Row>
             </Container>
